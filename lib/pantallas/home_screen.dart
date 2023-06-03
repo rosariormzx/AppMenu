@@ -1,50 +1,100 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:menu/pantallas/home_drawer_screen.dart';
-import 'package:menu/pantallas/photo_upload.dart';
-import 'package:menu/pantallas/signin_screen.dart';
+import 'package:menu/pantallas/bebidas_screen.dart';
+import 'package:menu/pantallas/login_user.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+import '../utils/color_utils.dart';
+import 'administrador_screen.dart';
+import 'comida_screen.dart';
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
+  static const appTitle = 'Menù';
 
-class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    String title = "Administrador";
+    return const MaterialApp(
+      title: appTitle,
+      color: Colors.lime,
+      debugShowCheckedModeBanner: false,
+      home: MyHomePage(title: appTitle),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key, required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
+      backgroundColor: Colors.amber,
+      appBar: AppBar(title: Text(title),
         backgroundColor: Color.fromARGB(255, 206, 105, 66),
       ),
-      body: const Center(
-        child: Text('Opciones de administrador'),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        color: Color.fromARGB(255, 233, 120, 75),
-        child: Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              IconButton(
-                icon: Icon(Icons.add_a_photo),
-                iconSize: 40,
-                color: Colors.purple,
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return PhotoUpload();
-                  }));
-                },
-              )
-            ],
-          ),
-        ),
+      body:  Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(colors:[toColor("F85E06"),toColor("F8CC06"),toColor("F81106") ],
+                  begin: Alignment.topCenter,end: Alignment.bottomCenter
+              )),
+        child: Stack(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children:<Widget> [
+                Center(
+                  child: Image.asset("assets/images/orange.png",
+                    width: MediaQuery.of(context).size.width/2,
+                    height: 200,
+                  ),
+                ),
+                Padding(padding: EdgeInsets.only(top: 70)),
+                FloatingActionButton.extended(
+                  // shape: CircleBorder(),
+                  label: const Text('Bienvenidos'),
+                  icon: const Icon(Icons.thumb_up),
+                  backgroundColor: Colors.pink,
+                  onPressed: (){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Hola Bienvenido, a tu izquierda encontraras las opciones  del menù"))
+                    );
+                  },
+                ),
+                Positioned(
+                    child:Align(
+                      alignment: FractionalOffset.bottomRight,
+                      child: Container(
+                        padding: const EdgeInsets.only(right: 15,left: 15,top: 50,bottom: 50),
+                        decoration: const BoxDecoration(
+                          color: Colors.redAccent,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(200)
+                          )
+                        ),
+                        child: const RotatedBox(
+                          quarterTurns: 3,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Text(
+                              "La mejor comida ",style: TextStyle(
+                              color: Colors.amberAccent,
+                              fontStyle: FontStyle.italic,
+                              fontSize: 20,
+                              letterSpacing: 5
+                            ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ) ,
+                ),
+
+                
+              ],
+            )
+          ],
+        )
       ),
       drawer: Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
@@ -54,27 +104,21 @@ class _HomeScreenState extends State<HomeScreen> {
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: [
-            Container(
-              width: 70,
-              height: 70,
-              child: const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(2255, 206, 105, 66),
-                ),
-                child: Text(
-                  'Bienvenidos',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 206, 105, 66),
               ),
+              child: Text('Bienvenidos',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+
             ),
             ListTile(
-              title: const Text('Comidas'),
+              title: const Text('Alimentos'),
               leading: Icon(Icons.fastfood),
               onTap: () {
                 // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
+                Navigator.push(context,MaterialPageRoute(builder: (context)=>ComidaScreen()));
               },
             ),
             ListTile(
@@ -84,18 +128,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Update the state of the app
                 // ...
                 // Then close the drawer
-                Navigator.pop(context);
+                Navigator.push(context,MaterialPageRoute(builder: (context)=>BebidasScreen()));
               },
             ),
             ListTile(
-              title: const Text('cerrar sesion'),
-              leading: Icon(Icons.logout),
+              title: const Text('Iniciar sesion'),
+              leading: Icon(Icons.login),
               onTap: () {
-                FirebaseAuth.instance.signOut().then((value) {
-                  print("Cerrar sesion");
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => Home_Drawer()));
-                });
+                Navigator.push(context,MaterialPageRoute(builder: (context)=>LoginUser()));
               },
             ),
           ],
